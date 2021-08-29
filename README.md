@@ -1,0 +1,1 @@
+# Zoom Clone project to practice JavaScript skills and real-time communication
