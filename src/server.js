@@ -1,7 +1,6 @@
 import express from "express";
 import path from "path";
 import http from "http";
-//import ws from "ws";
 import SocketIO from "socket.io";
 const app = express();
 
@@ -10,10 +9,18 @@ app.set("views", path.join(__dirname, "/views"));
 app.use("/public", express.static(path.join(__dirname, "/public")));
 app.get("/", (req, res)=>res.render("home"));
 app.get("/*", (req, res)=>res.redirect("/"));
+
 const server = http.createServer(app);
 const io = SocketIO(server);
-io.on("connection", () => {
-    
+io.on("connection", (socket) => {
+    console.log("Client connected");
+    socket.emit("server-connection", "Server is alive");
+    socket.on("enter_room", ({roomName}, done) => {
+        socket.join(roomName);
+        socket.to(roomName).emit("new_user");
+        console.log(socket.rooms);
+        done();
+    });
 });
 
 /* WebSocket */
