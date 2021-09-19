@@ -67,9 +67,10 @@ function handleCameraChange(){
     getMedia(constraints);
 }
 
-getMedia(defaultConstraints);
-getCameras();
-
+(async()=>{
+await getMedia(defaultConstraints);
+await getCameras();}
+)()
 muteBtn.addEventListener("click", handleMute);
 camBtn.addEventListener("click", handleCam);
 camerasSelect.addEventListener("input", handleCameraChange);
