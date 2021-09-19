@@ -5,13 +5,16 @@ const camBtn = document.getElementById("cam");
 const camerasSelect = document.getElementById("cameras");
 let myStream;
 let isMuted = true;
-let isCamOn = true;
+let isCamOff = true;
+const defaultConstraints = {
+    audio: true,
+    video: true
+}
 // socket.on("server-connection", (msg) => console.log(msg));
 async function getCameras() {
     try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         const cameras = devices.filter(device => device.kind === "videoinput");
-        
         cameras.forEach(camera => {
             let child = document.createElement("option");
             child.innerText = camera.label;
@@ -22,12 +25,9 @@ async function getCameras() {
         console.log(error)
     }
 }
-async function getMedia() {
+async function getMedia(constraints) {
     try{
-        myStream = await navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: true
-        });
+        myStream = await navigator.mediaDevices.getUserMedia(constraints);
         myFace.srcObject = myStream;
         myStream.getAudioTracks()
             .forEach(track => (track.enabled = false));
@@ -37,10 +37,6 @@ async function getMedia() {
         console.log(err);
     }
 }
-
-getMedia();
-getCameras();
-
 function handleMute (){
     isMuted = !isMuted;
     myStream.getAudioTracks()
@@ -53,16 +49,27 @@ function handleMute (){
     }
 }
 function handleCam (){
-    isCamOn = !isCamOn;
+    isCamOff = !isCamOff;
     myStream.getVideoTracks()
         .forEach(track => (track.enabled = !track.enabled));
-    if(isCamOn) {
+    if(isCamOff) {
         camBtn.innerText = "Turn Camera Off";
     }
     else {
         camBtn.innerText = "Turn Camera On";
     }
 }
-console.log(isCamOn, isMuted)
+function handleCameraChange(){
+    const constraints = {
+        audio: true,
+        video: {deviceId:camerasSelect.value}
+    }
+    // getMedia(constraints);
+}
+
+getMedia(constraints);
+getCameras();
+
 muteBtn.addEventListener("click", handleMute);
 camBtn.addEventListener("click", handleCam);
+camerasSelect.addEventListener("input", handleCameraChange);
