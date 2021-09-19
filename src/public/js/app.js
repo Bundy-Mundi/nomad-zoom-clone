@@ -8,7 +8,7 @@ let isMuted = true;
 let isCamOff = true;
 const defaultConstraints = {
     audio: true,
-    video: true
+    video: {facingMode:"user"}
 }
 // socket.on("server-connection", (msg) => console.log(msg));
 async function getCameras() {
@@ -64,10 +64,10 @@ function handleCameraChange(){
         audio: true,
         video: {deviceId:camerasSelect.value}
     }
-    // getMedia(constraints);
+    getMedia(constraints);
 }
 
-getMedia(constraints);
+getMedia(defaultConstraints);
 getCameras();
 
 muteBtn.addEventListener("click", handleMute);
